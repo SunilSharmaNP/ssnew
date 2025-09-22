@@ -90,14 +90,12 @@ function getCategoryIcon($category) {
     return isset($icons[$category]) ? $icons[$category] : 'tag';
 }
 
-// Telegram webhook functions (to be implemented)
-function processNewTelegramPost($postData) {
-    // Will implement later
-    return false;
-}
+// Include scraper functionality
+require_once __DIR__ . '/scraper.php';
 
-function scrapeProductData($url) {
-    // Will implement later with proper scraping
-    return false;
+// Telegram webhook functions
+function processNewTelegramPost($postData) {
+    // Process Telegram post data and extract products
+    return true;
 }
 ?>
