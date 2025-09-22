@@ -48,7 +48,7 @@ $categories = getCategories();
                     <div class="product-image">
                         <img src="<?php echo htmlspecialchars($product['image_url']); ?>" 
                              alt="<?php echo htmlspecialchars($product['title']); ?>"
-                             onerror="this.src='assets/images/placeholder.jpg'">
+                             onerror="handleImageError(this)">
                         <?php if ($product['discount_percentage'] > 0): ?>
                             <span class="discount-badge"><?php echo $product['discount_percentage']; ?>% OFF</span>
                         <?php endif; ?>
@@ -84,15 +84,4 @@ $categories = getCategories();
 </section>
 
 <?php
-function getCategoryIcon($category) {
-    $icons = [
-        'Electronics' => 'laptop',
-        'Fashion' => 'tshirt',
-        'Home' => 'home',
-        'Sports' => 'futbol',
-        'Books' => 'book',
-        'Beauty' => 'heart'
-    ];
-    return isset($icons[$category]) ? $icons[$category] : 'tag';
-}
 ?>

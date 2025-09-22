@@ -26,8 +26,8 @@ try {
         $pdo->exec("CREATE DATABASE IF NOT EXISTS " . DB_NAME);
         $pdo->exec("USE " . DB_NAME);
         // Include schema creation
-        if (file_exists('database/schema.sql')) {
-            $sql = file_get_contents('database/schema.sql');
+        if (file_exists('private/schema.sql')) {
+            $sql = file_get_contents('private/schema.sql');
             $pdo->exec($sql);
         }
     } catch(PDOException $e2) {

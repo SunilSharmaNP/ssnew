@@ -78,6 +78,18 @@ function getAffiliateLink($product) {
     return $link;
 }
 
+function getCategoryIcon($category) {
+    $icons = [
+        'Electronics' => 'laptop',
+        'Fashion' => 'tshirt', 
+        'Home' => 'home',
+        'Sports' => 'futbol',
+        'Books' => 'book',
+        'Beauty' => 'heart'
+    ];
+    return isset($icons[$category]) ? $icons[$category] : 'tag';
+}
+
 // Telegram webhook functions (to be implemented)
 function processNewTelegramPost($postData) {
     // Will implement later

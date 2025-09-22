@@ -8,12 +8,12 @@ function toggleTheme() {
     if (body.classList.contains('theme-dark')) {
         body.classList.remove('theme-dark');
         body.classList.add('theme-light');
-        icon.className = 'fas fa-sun';
+        if (icon) icon.className = 'fas fa-sun';
         localStorage.setItem('theme', 'light');
     } else {
         body.classList.remove('theme-light');
         body.classList.add('theme-dark');
-        icon.className = 'fas fa-moon';
+        if (icon) icon.className = 'fas fa-moon';
         localStorage.setItem('theme', 'dark');
     }
 }
@@ -48,26 +48,13 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Image lazy loading
-function lazyLoadImages() {
-    const images = document.querySelectorAll('img[data-src]');
-    const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.dataset.src;
-                img.removeAttribute('data-src');
-                imageObserver.unobserve(img);
-            }
-        });
-    });
-
-    images.forEach(img => imageObserver.observe(img));
-}
-
-// Initialize lazy loading if supported
-if ('IntersectionObserver' in window) {
-    document.addEventListener('DOMContentLoaded', lazyLoadImages);
+// Image lazy loading fallback
+function handleImageError(img) {
+    img.style.display = 'none';
+    const placeholder = document.createElement('div');
+    placeholder.className = 'image-placeholder';
+    placeholder.innerHTML = '<i class="fas fa-image"></i><span>Image not available</span>';
+    img.parentNode.insertBefore(placeholder, img);
 }
 
 // Prevent form submission on empty search
@@ -82,25 +69,40 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    
+    // Handle contact form submission
+    const contactForm = document.querySelector('.contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            
+            fetch('api/contact.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    this.reset();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Error sending message. Please try again.');
+            });
+        });
+    }
 });
 
-// Cache busting for development
-if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    // Add cache busting for CSS and JS in development
-    const links = document.querySelectorAll('link[rel="stylesheet"]');
-    const scripts = document.querySelectorAll('script[src]');
-    
-    const timestamp = new Date().getTime();
-    
-    links.forEach(link => {
-        if (link.href.includes('assets/')) {
-            link.href += '?v=' + timestamp;
+// Add to all image onerror attributes
+document.addEventListener('DOMContentLoaded', function() {
+    const images = document.querySelectorAll('img');
+    images.forEach(img => {
+        if (!img.hasAttribute('onerror')) {
+            img.setAttribute('onerror', 'handleImageError(this)');
         }
     });
-    
-    scripts.forEach(script => {
-        if (script.src.includes('assets/')) {
-            script.src += '?v=' + timestamp;
-        }
-    });
-}
+});
